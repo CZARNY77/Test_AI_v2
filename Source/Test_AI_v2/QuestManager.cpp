@@ -32,28 +32,74 @@ void UQuestManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	// ...
 }
 
-void UQuestManager::AddQuest(UQuestBase* Quest)
+void UQuestManager::AddQuest()
 {
-	if (Quest != nullptr) {
-		ActiveQuests.Add(Quest);
-	}
+	UFetchQuest* NewQuest = NewObject<UFetchQuest>(this, FetchQuestClass);
+
+	ActiveQuests.Add(NewQuest);
+
 }
 
 void UQuestManager::ActivateQuest(FName QuestID)
 {
+	for (UQuestBase* Quest : ActiveQuests) {
+		if (Quest && Quest->ID == QuestID) {
+			Quest->ActivateQuest();
+			break;
+		}
+	}
 }
 
-void UQuestManager::IsQuestCompleted(FName QuestID) const
+void UQuestManager::CompletedQuest(FName QuestID)
 {
+	for (UQuestBase* Quest : ActiveQuests) {
+		if (Quest && Quest->ID == QuestID && !Quest->bIsCompleted) {
+			Quest->CompleteQuest();
+			CompletedQuests.Add(Quest);
+			ActiveQuests.Remove(Quest);
+			break;
+		}
+	}
+}
+
+bool UQuestManager::IsQuestCompleted(FName QuestID) const
+{
+	for (UQuestBase* Quest : CompletedQuests) {
+		if (Quest && Quest->ID == QuestID) {
+			return true;
+		}
+	}
+	return false;
 }
 
 TArray<UQuestBase*> UQuestManager::GetActiveQuests() const
 {
-	return TArray<UQuestBase*>();
+	//return TArray<UQuestBase*>();
+	return ActiveQuests;
 }
 
 TArray<UQuestBase*> UQuestManager::GetCompletedQuests() const
 {
-	return TArray<UQuestBase*>();
+	//return TArray<UQuestBase*>();
+	return CompletedQuests;
 }
 
+UFetchQuest* UQuestManager::ConstructFetchQuest(FName QuestID, FText QuestName, FText Description, int ExpReward, FName ItemID, int32 RequiredItemCount)
+{
+	UFetchQuest* NewQuest = NewObject<UFetchQuest>(this);
+	if (NewQuest != nullptr)
+	{
+		// Inicjalizacja w³aœciwoœci nowego questu
+		NewQuest->ID = QuestID;
+		NewQuest->Name = QuestName;
+		NewQuest->Description = Description;
+		NewQuest->EXPReward = ExpReward;
+		NewQuest->bIsCompleted = false;
+		NewQuest->ItemID = ItemID;
+		NewQuest->RequiredItemCount = RequiredItemCount;
+		//NewQuest->ActivateQuest();
+
+		ActiveQuests.Add(NewQuest);
+	}
+	return NewQuest;
+}

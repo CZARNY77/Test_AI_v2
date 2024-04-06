@@ -9,8 +9,10 @@ UQuestBase::UQuestBase()
 
 void UQuestBase::ActivateQuest()
 {
+	
 }
 
 void UQuestBase::CompleteQuest()
 {
+	bIsCompleted = true;
 }

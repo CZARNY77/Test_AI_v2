@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "QuestBase.h"
+#include "FetchQuest.h"
 #include "QuestManager.generated.h"
 
 
@@ -32,17 +33,26 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Quests")
-	void AddQuest(UQuestBase* Quest);
+	void AddQuest();
 
 	UFUNCTION(BlueprintCallable, Category = "Quests")
 	void ActivateQuest(FName QuestID);
 
 	UFUNCTION(BlueprintCallable, Category = "Quests")
-	void IsQuestCompleted(FName QuestID) const;
+	void CompletedQuest(FName QuestID);
+
+	UFUNCTION(BlueprintCallable, Category = "Quests")
+	bool IsQuestCompleted(FName QuestID) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Quests")
 	TArray<UQuestBase*> GetActiveQuests() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Quests")
 	TArray<UQuestBase*> GetCompletedQuests() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Quest Management")
+	UFetchQuest* ConstructFetchQuest(FName QuestID, FText QuestName, FText Description, int ExpReward, FName ItemID, int32 RequiredItemCount);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Classes")
+	TSubclassOf<UFetchQuest> FetchQuestClass;
 };

@@ -20,7 +20,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Classes")
 	TSubclassOf<UQuestManager> QuestManagerClass;
 	
-	UPROPERTY(EditAnywhere, Category = "Quest")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Quest")
 	class UQuestManager* QuestManagerInstance;
 
 public:
